@@ -1,5 +1,7 @@
 """The users' entry point (openalea.granap.simulation): its tables agree with the DataStructure the component wrote,
 and its parameters act as GRANAP's rules say."""
+import os
+
 import numpy as np
 import pytest
 
@@ -99,6 +101,8 @@ def _assert_same_bits(one: dict, two: dict) -> None:
         np.testing.assert_array_equal(two[key], values, err_msg=key)
 
 
+@pytest.mark.skipif(not hasattr(os, "fork"), reason="Compute(processes>1) forks its workers (Linux, macOS); "
+                                                   "Windows has no fork")
 def test_two_populations_in_two_processes_give_the_bits_of_one():
     """Two sections (seeds 0 and 1) in two populations (planting(population=)): Compute(processes=2) runs each in its
     worker process, with the values of one process."""
